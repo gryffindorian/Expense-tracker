@@ -11,6 +11,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
+
 @Service
 @RequiredArgsConstructor
 public class AuthService {
@@ -42,14 +44,18 @@ public class AuthService {
         }
     }
 
-//    public AuthResponse login(LoginRequest loginRequest){
-//        if(!userRepository.existsByEmail(loginRequest.getEmail())){
-//            throw new RuntimeException("No user exists");
-//        }
-//        else {
-//            String hashedPassword = passwordEncoder.encode(loginRequest.getPassword());
-//
-//            if(hashedPassword.equals(userRepository.findByEmail(loginRequest.getEmail()).getPassword))
-//        }
-//    }
+    public AuthResponse login(LoginRequest loginRequest){
+
+            User user = userRepository.findByEmail(loginRequest.getEmail())
+                    .orElseThrow(() -> new RuntimeException("User not found"));
+
+            if(!passwordEncoder.matches(loginRequest.getPassword(), user.getPassword())){
+                throw new RuntimeException("Password is incorrect");
+
+            }
+            String jwtToken = jwtService.generateToken(loginRequest.getEmail());
+            return AuthResponse.builder()
+                .jwtToken(jwtToken)
+                .build();
+    }
 }
