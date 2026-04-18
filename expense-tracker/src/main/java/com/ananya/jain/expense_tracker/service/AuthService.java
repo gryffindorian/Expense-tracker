@@ -7,7 +7,6 @@ import com.ananya.jain.expense_tracker.entity.User;
 import com.ananya.jain.expense_tracker.repository.UserRepository;
 import com.ananya.jain.expense_tracker.security.JwtService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
