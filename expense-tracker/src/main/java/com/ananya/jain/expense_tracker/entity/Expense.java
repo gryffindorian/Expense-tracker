@@ -1,5 +1,6 @@
 package com.ananya.jain.expense_tracker.entity;
 
+import com.ananya.jain.expense_tracker.enums.Category;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -33,7 +34,7 @@ public class Expense {
     private LocalDateTime createdAt;
 
     @Enumerated(EnumType.STRING)
-    private Categories category;
+    private Category category;
 
     private BigDecimal amount;
 
