@@ -16,6 +16,8 @@ import java.time.LocalDateTime;
 @Builder
 public class ExpenseResponse {
 
+    private Long id;
+
     private BigDecimal amount;
 
     private Category category;
