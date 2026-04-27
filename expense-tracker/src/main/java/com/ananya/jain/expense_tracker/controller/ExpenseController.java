@@ -1,9 +1,6 @@
 package com.ananya.jain.expense_tracker.controller;
 
-import com.ananya.jain.expense_tracker.dto.CreateExpenseRequest;
-import com.ananya.jain.expense_tracker.dto.ExpenseResponse;
-import com.ananya.jain.expense_tracker.dto.PaginatedResponse;
-import com.ananya.jain.expense_tracker.dto.UpdateExpenseRequest;
+import com.ananya.jain.expense_tracker.dto.*;
 import com.ananya.jain.expense_tracker.enums.Category;
 import com.ananya.jain.expense_tracker.service.ExpenseService;
 import jakarta.validation.Valid;
@@ -46,5 +43,11 @@ public class ExpenseController {
     @DeleteMapping("/{id}")
     public ResponseEntity<String> deleteExpense(@PathVariable Long id){
         return expenseService.deleteExpense(id);
+    }
+
+    @GetMapping("/summary")
+    public SummaryResponse getSummary(@RequestParam(required = false) LocalDate startDate,
+                                      @RequestParam(required = false) LocalDate endDate){
+        return expenseService.getSummary(startDate, endDate);
     }
 }

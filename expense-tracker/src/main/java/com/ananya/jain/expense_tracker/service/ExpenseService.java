@@ -1,15 +1,11 @@
 package com.ananya.jain.expense_tracker.service;
 
-import com.ananya.jain.expense_tracker.dto.CreateExpenseRequest;
-import com.ananya.jain.expense_tracker.dto.ExpenseResponse;
-import com.ananya.jain.expense_tracker.dto.PaginatedResponse;
-import com.ananya.jain.expense_tracker.dto.UpdateExpenseRequest;
+import com.ananya.jain.expense_tracker.dto.*;
 import com.ananya.jain.expense_tracker.entity.Expense;
 import com.ananya.jain.expense_tracker.entity.User;
 import com.ananya.jain.expense_tracker.enums.Category;
 import com.ananya.jain.expense_tracker.repository.ExpenseRepository;
 import lombok.RequiredArgsConstructor;
-import org.apache.coyote.Response;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
@@ -17,10 +13,9 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
-import java.net.http.HttpResponse;
+import java.math.BigDecimal;
 import java.time.LocalDate;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
 
 @Service
 @RequiredArgsConstructor
@@ -149,5 +144,43 @@ public class ExpenseService {
 
         return ResponseEntity.ok("Expense deleted succesfully");
 
+    }
+
+    public SummaryResponse getSummary(LocalDate startDate, LocalDate endDate){
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        User user = (User) authentication.getPrincipal();
+
+        List<Expense> expenses;
+
+        if(Objects.nonNull(startDate) && Objects.nonNull(endDate)){
+            expenses = expenseRepository.findByUserAndExpenseDateBetween(user, startDate, endDate);
+        }
+        else {
+            expenses = expenseRepository.findByUser(user);
+
+        }
+
+        BigDecimal total = BigDecimal.ZERO;
+
+        for(Expense expense: expenses){
+            total = total.add(expense.getAmount());
+        }
+
+        Map<Category, BigDecimal> categoryMap = new HashMap<>();
+
+        for(Expense expense: expenses){
+            Category category = expense.getCategory();
+            BigDecimal amount = expense.getAmount();
+
+            categoryMap.put(
+                    category,
+                    categoryMap.getOrDefault(category, BigDecimal.ZERO).add(amount)
+            );
+        }
+
+        return SummaryResponse.builder().
+                totalSpent(total).
+                categoryBreakdown(categoryMap).
+                build();
     }
 }
