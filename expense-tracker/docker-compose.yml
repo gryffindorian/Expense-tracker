@@ -22,4 +22,4 @@ services:
     environment:
       SPRING_DATASOURCE_URL: jdbc:postgresql://postgres-db:5432/expense_db
       SPRING_DATASOURCE_USERNAME: postgres
-      SPRING_DATASOURCE_PASSWORD: ${DB_PASSWORD}
+      SPRING_DATASOURCE_PASSWORD: postgres
